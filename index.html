@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Habit Map</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+    <!-- ── Notification permission banner (shown once) ──────────── -->
+    <div id="notif-banner" class="notif-banner hidden">
+        <span>🔔 Enable notifications to receive habit reminders.</span>
+        <button id="btn-allow-notif">Allow notifications</button>
+        <button id="btn-dismiss-notif" class="btn-dismiss">✕</button>
+    </div>
+
+    <div class="page-wrap">
+
+        <!-- ── Site Header with live clock ─────────────────────────── -->
+        <header class="site-header">
+            <div class="header-top">
+                <div>
+                    <h1>The <em>Habit</em> Map</h1>
+                    <p class="tagline">Build streaks. Track progress. One day at a time.</p>
+                </div>
+                <!-- Live clock — updated every second by script.js -->
+                <div class="clock-wrap" id="clock-wrap">
+                    <div class="clock-time" id="clock-time">00:00:00</div>
+                    <div class="clock-date" id="clock-date">Monday, 1 Jan</div>
+                </div>
+            </div>
+
+            <!-- ── Tab navigation ─────────────────────────────────────── -->
+            <nav class="tab-nav" role="tablist">
+                <button class="tab-btn active" data-tab="dashboard" role="tab" aria-selected="true">
+                    📋 Dashboard
+                </button>
+                <button class="tab-btn" data-tab="planner" role="tab" aria-selected="false">
+                    📅 Weekly Planner
+                </button>
+                <button class="tab-btn" data-tab="monthly" role="tab" aria-selected="false">
+                    🗓 Monthly Goals
+                </button>
+                <button class="tab-btn" data-tab="insights" role="tab" aria-selected="false">
+                    📊 Insights
+                </button>
+            </nav>
+        </header>
+
+        <!-- ════════════════════════════════════════════════════════════
+       TAB 1 — DASHBOARD
+  ═════════════════════════════════════════════════════════════ -->
+        <section id="tab-dashboard" class="tab-panel active" role="tabpanel">
+
+            <!-- Summary stat cards -->
+            <div class="section-label">Today's overview</div>
+            <div id="summary">
+                <div class="stat-card">
+                    <div class="stat-label">Total habits</div>
+                    <div class="stat-value" id="stat-total">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Done today</div>
+                    <div class="stat-value" id="stat-done">0</div>
+                </div>
+                <div class="stat-card completion">
+                    <div class="stat-label">Completion</div>
+                    <div class="stat-value" id="stat-pct">—</div>
+                    <div class="progress-wrap">
+                        <div class="progress-bar" id="summary-bar" style="width:0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add habit form -->
+            <div class="form-card">
+                <h2>Add a new habit</h2>
+                <div class="form-grid" id="habit-form">
+
+                    <div class="form-group full">
+                        <label for="input-name">Habit name</label>
+                        <input type="text" id="input-name" placeholder="e.g. Read for 20 minutes" maxlength="60" />
+                        <span class="error-msg" id="err-name">Name must be at least 3 characters.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-target">Target days / week</label>
+                        <input type="number" id="input-target" placeholder="1–7" min="1" max="7" step="1" />
+                        <span class="error-msg" id="err-target">Enter a whole number between 1 and 7.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-category">Category</label>
+                        <select id="input-category">
+                            <option value="">— Choose category —</option>
+                            <option value="Health">Health</option>
+                            <option value="Fitness">Fitness</option>
+                            <option value="Learning">Learning</option>
+                            <option value="Productivity">Productivity</option>
+                            <option value="Personal Development">Personal Development</option>
+                        </select>
+                        <span class="error-msg" id="err-cat">Please select a category.</span>
+                    </div>
+
+                    <div class="form-group full">
+                        <button class="btn-add" id="btn-submit">+ Add habit</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter / sort toolbar -->
+            <div class="toolbar">
+                <label for="filter-cat">Filter:</label>
+                <select id="filter-cat">
+                    <option value="">All categories</option>
+                    <option value="Health">Health</option>
+                    <option value="Fitness">Fitness</option>
+                    <option value="Learning">Learning</option>
+                    <option value="Productivity">Productivity</option>
+                    <option value="Personal Development">Personal Development</option>
+                </select>
+                <button class="sort-btn" id="btn-sort">↑ Sort by streak</button>
+            </div>
+
+            <div class="section-label">Your habits</div>
+            <div id="habit-list"></div>
+
+            <p class="persist-note">💾 Habits auto-saved in your browser.</p>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════
+       TAB 2 — WEEKLY PLANNER
+       Shows a Mon–Sun calendar for the current week.
+       Each day has an "Add scheduled session" button.
+  ═════════════════════════════════════════════════════════════ -->
+        <section id="tab-planner" class="tab-panel" role="tabpanel">
+
+            <div class="planner-header">
+                <button class="week-nav-btn" id="btn-prev-week">← Prev</button>
+                <h2 id="week-label">Week of …</h2>
+                <button class="week-nav-btn" id="btn-next-week">Next →</button>
+            </div>
+
+            <!-- Seven day columns rendered by JS -->
+            <div id="week-grid" class="week-grid"></div>
+
+            <!-- ── Schedule session modal / inline form ──────────────── -->
+            <div id="schedule-modal" class="modal-overlay hidden">
+                <div class="modal-card">
+                    <h3 id="modal-title">Schedule a session</h3>
+
+                    <div class="form-group">
+                        <label for="sch-habit">Habit</label>
+                        <select id="sch-habit">
+                            <option value="">— Select habit —</option>
+                        </select>
+                        <span class="error-msg" id="err-sch-habit">Please select a habit.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sch-time">Time</label>
+                        <input type="time" id="sch-time" />
+                        <span class="error-msg" id="err-sch-time">Please enter a time.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sch-note">Note (optional)</label>
+                        <input type="text" id="sch-note" placeholder="e.g. 20 min session" maxlength="80" />
+                    </div>
+
+                    <div class="modal-actions">
+                        <button class="btn-add" id="btn-save-session">Save session</button>
+                        <button class="btn-cancel" id="btn-cancel-session">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════
+       TAB 3 — MONTHLY GOALS
+  ═════════════════════════════════════════════════════════════ -->
+        <section id="tab-monthly" class="tab-panel" role="tabpanel">
+
+            <div class="planner-header">
+                <button class="week-nav-btn" id="btn-prev-month">← Prev</button>
+                <h2 id="month-label">Month …</h2>
+                <button class="week-nav-btn" id="btn-next-month">Next →</button>
+            </div>
+
+            <!-- Per-habit monthly goal setters rendered by JS -->
+            <div id="monthly-goal-list" class="monthly-goal-list"></div>
+
+            <!-- Full month calendar grid -->
+            <div class="section-label" style="margin-top:1.5rem">Month calendar</div>
+            <div id="month-cal" class="month-cal"></div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════
+       TAB 4 — INSIGHTS (performance comparison)
+  ═════════════════════════════════════════════════════════════ -->
+        <section id="tab-insights" class="tab-panel" role="tabpanel">
+
+            <div class="section-label">Performance comparison</div>
+
+            <!-- Period toggle -->
+            <div class="toolbar" style="margin-bottom:1.5rem">
+                <button class="sort-btn active" id="ins-week-btn" data-period="week">This week</button>
+                <button class="sort-btn" id="ins-month-btn" data-period="month">This month</button>
+            </div>
+
+            <!-- Big comparison cards rendered by JS -->
+            <div id="insights-grid" class="insights-grid"></div>
+
+            <!-- Per-habit bar chart -->
+            <div class="section-label" style="margin-top:1.75rem">Streak history per habit</div>
+            <div id="streak-chart" class="streak-chart"></div>
+
+            <!-- Completion heatmap placeholder -->
+            <div class="section-label" style="margin-top:1.75rem">Completion heatmap (last 12 weeks)</div>
+            <div id="heatmap" class="heatmap"></div>
+
+        </section>
+
+    </div><!-- /.page-wrap -->
+
+    <script src="script.js"></script>
+</body>
+
+</html>

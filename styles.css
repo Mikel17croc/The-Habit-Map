@@ -1,0 +1,1258 @@
+/* ============================================================
+   THE HABIT MAP — styles.css  (v2 with Planner, Monthly Goals,
+   Insights, Clock and Notifications)
+   ============================================================ */
+
+/* ── 1. Reset & CSS variables ──────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --cream: #F5F0E8;
+    --cream-dark: #EBE4D4;
+    --paper: #FDFAF4;
+    --ink: #1C1A15;
+    --ink-mid: #4A4639;
+    --ink-light: #8C8576;
+
+    --sienna: #C05A2A;
+    --sienna-lt: #F0D5C0;
+
+    --sage: #4A7C59;
+    --sage-lt: #C8DDD0;
+
+    --gold: #B8860B;
+    --gold-lt: #F5E4B0;
+
+    --plum: #7B3F6E;
+    --plum-lt: #E8CDE2;
+
+    --sky: #2D6A8F;
+    --sky-lt: #C5DFF0;
+
+    --red-err: #B03030;
+    --red-err-lt: #FCE8E8;
+
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+
+    --shadow: 0 2px 12px rgba(28, 26, 21, 0.08);
+    --shadow-lg: 0 6px 30px rgba(28, 26, 21, 0.14);
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(192, 90, 42, 0.04) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(74, 124, 89, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── 2. Notification banner ────────────────────────────────── */
+.notif-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.88rem;
+    flex-wrap: wrap;
+}
+
+.notif-banner.hidden {
+    display: none;
+}
+
+.notif-banner button {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    background: var(--sienna);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0.35rem 0.9rem;
+    cursor: pointer;
+}
+
+.notif-banner .btn-dismiss {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    margin-left: auto;
+}
+
+/* ── 3. Page layout ────────────────────────────────────────── */
+.page-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+}
+
+/* ── 4. Site header ────────────────────────────────────────── */
+.site-header {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1.5px solid var(--cream-dark);
+}
+
+.site-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.site-header h1 em {
+    font-style: italic;
+    color: var(--sienna);
+}
+
+.tagline {
+    font-size: 0.9rem;
+    color: var(--ink-light);
+    margin-top: 0.3rem;
+    font-weight: 300;
+}
+
+/* ── 5. Live clock ─────────────────────────────────────────── */
+.clock-wrap {
+    text-align: right;
+    background: var(--paper);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius-md);
+    padding: 0.65rem 1rem;
+    box-shadow: var(--shadow);
+    min-width: 140px;
+}
+
+.clock-time {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    line-height: 1;
+}
+
+.clock-date {
+    font-size: 0.72rem;
+    color: var(--ink-light);
+    margin-top: 0.2rem;
+    letter-spacing: 0.05em;
+}
+
+/* ── 6. Tab navigation ─────────────────────────────────────── */
+.tab-nav {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 1.75rem;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    /* prevent clip of active indicator */
+    scrollbar-width: none;
+}
+
+.tab-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.tab-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: none;
+    border: 1.5px solid var(--cream-dark);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    color: var(--ink-mid);
+    white-space: nowrap;
+    transition: all 0.15s;
+}
+
+.tab-btn:hover {
+    background: var(--cream-dark);
+}
+
+.tab-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+}
+
+/* ── 7. Tab panels ─────────────────────────────────────────── */
+.tab-panel {
+    display: none;
+    animation: fade-in 0.2s ease;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── 8. Section label ──────────────────────────────────────── */
+.section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+}
+
+/* ── 9. Summary dashboard ──────────────────────────────────── */
+#summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2.25rem;
+}
+
+.stat-card {
+    background: var(--paper);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow);
+}
+
+.stat-card .stat-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.3rem;
+}
+
+.stat-card .stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.1rem;
+    line-height: 1;
+    color: var(--ink);
+}
+
+.stat-card.completion .stat-value {
+    color: var(--sage);
+}
+
+/* ── 10. Progress bars ─────────────────────────────────────── */
+.progress-wrap {
+    background: var(--cream-dark);
+    border-radius: 99px;
+    height: 6px;
+    margin-top: 0.6rem;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--sage);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+}
+
+/* ── 11. Form card ─────────────────────────────────────────── */
+.form-card {
+    background: var(--paper);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.form-card h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.35rem;
+    margin-bottom: 1.25rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-mid);
+    letter-spacing: 0.03em;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="time"],
+select {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    background: var(--cream);
+    border: 1.5px solid var(--cream-dark);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.85rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238C8576' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+    padding-right: 2.5rem;
+}
+
+input[type="time"] {
+    appearance: auto;
+    -webkit-appearance: auto;
+    padding-right: 0.5rem;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--sienna);
+    box-shadow: 0 0 0 3px rgba(192, 90, 42, 0.12);
+}
+
+input.error,
+select.error {
+    border-color: var(--red-err);
+    box-shadow: 0 0 0 3px rgba(176, 48, 48, 0.1);
+}
+
+.error-msg {
+    font-size: 0.77rem;
+    color: var(--red-err);
+    display: none;
+    padding: 0.3rem 0.5rem;
+    background: var(--red-err-lt);
+    border-radius: var(--radius-sm);
+}
+
+.error-msg.visible {
+    display: block;
+}
+
+/* ── 12. Buttons ───────────────────────────────────────────── */
+.btn-add {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 1.5rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.02em;
+}
+
+.btn-add:hover {
+    background: var(--sienna);
+}
+
+.btn-add:active {
+    transform: scale(0.98);
+}
+
+.btn-cancel {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    background: none;
+    border: 1.5px solid var(--cream-dark);
+    border-radius: var(--radius-sm);
+    padding: 0.65rem 1.2rem;
+    cursor: pointer;
+    color: var(--ink-mid);
+    margin-top: 0.5rem;
+    transition: all 0.15s;
+}
+
+.btn-cancel:hover {
+    background: var(--cream-dark);
+}
+
+/* ── 13. Toolbar ───────────────────────────────────────────── */
+.toolbar {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.toolbar label {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    font-weight: 400;
+}
+
+.toolbar select {
+    font-size: 0.82rem;
+    padding: 0.4rem 2rem 0.4rem 0.7rem;
+    background-color: var(--paper);
+}
+
+.sort-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    background: var(--paper);
+    border: 1.5px solid var(--cream-dark);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.85rem;
+    cursor: pointer;
+    color: var(--ink-mid);
+    transition: all 0.15s;
+}
+
+.sort-btn:hover {
+    background: var(--cream-dark);
+}
+
+.sort-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+}
+
+/* ── 14. Habit list & cards ────────────────────────────────── */
+#habit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.habit-card {
+    background: var(--paper);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow);
+    animation: slide-in 0.3s ease;
+}
+
+.habit-card.done {
+    background: var(--sage-lt);
+    border-color: #b0ccbb;
+}
+
+.habit-card.done .habit-name {
+    text-decoration: line-through;
+    opacity: 0.55;
+}
+
+.habit-check {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    border: 2px solid var(--cream-dark);
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    background: var(--cream);
+}
+
+.habit-check:checked {
+    background: var(--sage);
+    border-color: var(--sage);
+}
+
+.habit-check:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 7px;
+    height: 11px;
+    border: 2px solid white;
+    border-top: none;
+    border-left: none;
+    transform: rotate(42deg);
+}
+
+.habit-check:hover {
+    border-color: var(--sage);
+}
+
+.habit-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.habit-name {
+    font-size: 1rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.habit-meta {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.3rem;
+    align-items: center;
+}
+
+.habit-target {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+}
+
+.cat-pill {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.18rem 0.6rem;
+    border-radius: 99px;
+}
+
+.cat-health {
+    background: var(--sienna-lt);
+    color: var(--sienna);
+}
+
+.cat-fitness {
+    background: var(--sky-lt);
+    color: var(--sky);
+}
+
+.cat-learning {
+    background: var(--gold-lt);
+    color: var(--gold);
+}
+
+.cat-productivity {
+    background: var(--plum-lt);
+    color: var(--plum);
+}
+
+.cat-personal {
+    background: var(--sage-lt);
+    color: var(--sage);
+}
+
+.streak-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--sienna);
+    background: var(--sienna-lt);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+}
+
+.habit-progress-wrap {
+    margin-top: 0.45rem;
+    background: var(--cream-dark);
+    border-radius: 99px;
+    height: 4px;
+    overflow: hidden;
+}
+
+.habit-progress-bar {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--sienna);
+    transition: width 0.4s ease;
+}
+
+.btn-delete {
+    background: none;
+    border: 1.5px solid var(--cream-dark);
+    border-radius: var(--radius-sm);
+    color: var(--ink-light);
+    padding: 0.35rem 0.6rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.btn-delete:hover {
+    border-color: var(--red-err);
+    color: var(--red-err);
+    background: var(--red-err-lt);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--ink-light);
+}
+
+.empty-state .empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.4;
+}
+
+.persist-note {
+    text-align: center;
+    margin-top: 2.5rem;
+    font-size: 0.75rem;
+    color: var(--ink-light);
+}
+
+/* ── 15. Weekly planner ────────────────────────────────────── */
+.planner-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.planner-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+}
+
+.week-nav-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    background: var(--paper);
+    border: 1.5px solid var(--cream-dark);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    color: var(--ink-mid);
+    transition: all 0.15s;
+}
+
+.week-nav-btn:hover {
+    background: var(--cream-dark);
+}
+
+.week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+.day-col {
+    background: var(--paper);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius-md);
+    padding: 0.65rem 0.6rem;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.day-col.today {
+    border-color: var(--sienna);
+    box-shadow: 0 0 0 2px rgba(192, 90, 42, 0.18);
+}
+
+.day-col-header {
+    text-align: center;
+    margin-bottom: 0.3rem;
+}
+
+.day-name {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+}
+
+.day-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.35rem;
+    line-height: 1;
+    color: var(--ink);
+}
+
+.day-col.today .day-num {
+    color: var(--sienna);
+}
+
+/* Scheduled session chip */
+.session-chip {
+    background: var(--sienna-lt);
+    border: 1px solid rgba(192, 90, 42, 0.2);
+    border-radius: var(--radius-sm);
+    padding: 0.25rem 0.4rem;
+    font-size: 0.68rem;
+    line-height: 1.3;
+    cursor: default;
+    position: relative;
+}
+
+.session-chip .chip-time {
+    font-weight: 600;
+    color: var(--sienna);
+}
+
+.session-chip .chip-name {
+    color: var(--ink-mid);
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.session-chip .chip-delete {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: 0.6rem;
+    color: var(--ink-light);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
+}
+
+.session-chip .chip-delete:hover {
+    color: var(--red-err);
+}
+
+/* Done session chip */
+.session-chip.chip-done {
+    background: var(--sage-lt);
+    border-color: rgba(74, 124, 89, 0.2);
+}
+
+.session-chip.chip-done .chip-time {
+    color: var(--sage);
+}
+
+.btn-add-session {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    background: none;
+    border: 1.5px dashed var(--cream-dark);
+    border-radius: var(--radius-sm);
+    padding: 0.35rem;
+    cursor: pointer;
+    color: var(--ink-light);
+    text-align: center;
+    margin-top: auto;
+    transition: all 0.15s;
+}
+
+.btn-add-session:hover {
+    border-color: var(--sienna);
+    color: var(--sienna);
+    background: var(--sienna-lt);
+}
+
+/* ── 16. Modal ─────────────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(28, 26, 21, 0.5);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-card {
+    background: var(--paper);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* ── 17. Monthly goals ─────────────────────────────────────── */
+.monthly-goal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.goal-row {
+    background: var(--paper);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius-md);
+    padding: 0.9rem 1.15rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.goal-row-name {
+    flex: 1;
+    font-size: 0.95rem;
+    font-weight: 500;
+    min-width: 120px;
+}
+
+.goal-row-cat {
+    font-size: 0.72rem;
+    color: var(--ink-light);
+}
+
+.goal-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.goal-input-wrap label {
+    font-size: 0.78rem;
+    white-space: nowrap;
+}
+
+.goal-input-wrap input[type="number"] {
+    width: 64px;
+    font-size: 0.88rem;
+    padding: 0.4rem 0.5rem;
+    text-align: center;
+}
+
+.goal-progress-label {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    white-space: nowrap;
+}
+
+.goal-bar-wrap {
+    flex: 1;
+    min-width: 80px;
+    background: var(--cream-dark);
+    border-radius: 99px;
+    height: 5px;
+    overflow: hidden;
+}
+
+.goal-bar {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--sage);
+    transition: width 0.4s;
+}
+
+/* ── 18. Month calendar ────────────────────────────────────── */
+.month-cal {
+    background: var(--paper);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.cal-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.cal-day-name {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.cal-cell {
+    border-right: 1px solid var(--cream-dark);
+    border-bottom: 1px solid var(--cream-dark);
+    padding: 0.4rem 0.5rem;
+    min-height: 60px;
+    font-size: 0.8rem;
+    position: relative;
+}
+
+.cal-cell:nth-child(7n) {
+    border-right: none;
+}
+
+.cal-cell-num {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink-mid);
+    margin-bottom: 0.25rem;
+}
+
+.cal-cell.today-cell .cal-cell-num {
+    background: var(--sienna);
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+}
+
+.cal-cell.other-month {
+    background: var(--cream);
+}
+
+.cal-cell.other-month .cal-cell-num {
+    color: var(--ink-light);
+}
+
+.cal-dot-row {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+}
+
+.cal-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--sienna);
+    flex-shrink: 0;
+}
+
+.cal-dot.done-dot {
+    background: var(--sage);
+}
+
+/* ── 19. Insights ──────────────────────────────────────────── */
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.9rem;
+}
+
+.insight-card {
+    background: var(--paper);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow);
+}
+
+.insight-card .ic-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.4rem;
+}
+
+.insight-card .ic-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.85rem;
+}
+
+.ic-current {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    line-height: 1;
+    color: var(--ink);
+}
+
+.ic-prev {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    padding-bottom: 0.2rem;
+}
+
+.ic-delta {
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 99px;
+    margin-left: auto;
+    align-self: flex-start;
+}
+
+.ic-delta.up {
+    background: var(--sage-lt);
+    color: var(--sage);
+}
+
+.ic-delta.down {
+    background: var(--red-err-lt);
+    color: var(--red-err);
+}
+
+.ic-delta.same {
+    background: var(--cream-dark);
+    color: var(--ink-mid);
+}
+
+/* ── 20. Streak bar chart ──────────────────────────────────── */
+.streak-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.sc-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sc-label {
+    font-size: 0.82rem;
+    width: 140px;
+    min-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--ink-mid);
+}
+
+.sc-bar-wrap {
+    flex: 1;
+    background: var(--cream-dark);
+    border-radius: 99px;
+    height: 10px;
+    overflow: hidden;
+}
+
+.sc-bar-current {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--sienna);
+    transition: width 0.5s ease;
+}
+
+.sc-prev-line {
+    height: 100%;
+    border-radius: 99px;
+    background: repeating-linear-gradient(90deg, var(--ink-light) 0, var(--ink-light) 4px, transparent 4px, transparent 8px);
+}
+
+.sc-val {
+    font-size: 0.8rem;
+    color: var(--ink-mid);
+    min-width: 28px;
+    text-align: right;
+}
+
+/* ── 21. Heatmap ───────────────────────────────────────────── */
+.heatmap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-x: auto;
+}
+
+.heatmap-row {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.heatmap-label {
+    font-size: 0.65rem;
+    color: var(--ink-light);
+    width: 28px;
+    flex-shrink: 0;
+    text-align: right;
+    padding-right: 4px;
+}
+
+.heat-cell {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    background: var(--cream-dark);
+    flex-shrink: 0;
+    transition: transform 0.1s;
+}
+
+.heat-cell:hover {
+    transform: scale(1.3);
+    cursor: default;
+}
+
+.heat-0 {
+    background: var(--cream-dark);
+}
+
+.heat-1 {
+    background: #d4e9c8;
+}
+
+.heat-2 {
+    background: #90c97a;
+}
+
+.heat-3 {
+    background: var(--sage);
+}
+
+.heat-4 {
+    background: #2d5c3e;
+}
+
+/* ── 22. Animations ────────────────────────────────────────── */
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── 23. Responsive ────────────────────────────────────────── */
+@media (max-width: 700px) {
+    .week-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .insights-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 540px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full {
+        grid-column: auto;
+    }
+
+    #summary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #summary .stat-card:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .habit-card {
+        flex-wrap: wrap;
+    }
+
+    .week-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .header-top {
+        flex-direction: column;
+    }
+
+    .clock-wrap {
+        text-align: left;
+        width: 100%;
+    }
+
+    .sc-label {
+        width: 90px;
+        min-width: 90px;
+    }
+}
