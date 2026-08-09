@@ -1,5 +1,6 @@
 # 🌱 The Habit Map
-
+//live URL: https://the-habit-map1.netlify.app/
+// Loom Video : https://www.loom.com/share/c8f956e6a459410dabc3bb4eeade35a8
 > *Build streaks. Track progress. One day at a time.*
 
 A fully client-side habit tracking web application built with pure **HTML, CSS, and Vanilla JavaScript** — no frameworks, no backend, no installation required. Just open `index.html` in a browser and start building better habits.
